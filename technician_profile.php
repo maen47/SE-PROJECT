@@ -24,7 +24,19 @@ if ($can_edit && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_prof
     $stmt->bind_param("sssi", $new_name, $new_specialty, $new_phone, $tech_id);
     $stmt->execute();
 
-    // รีเฟรชหน้าใหม่
+    header("Location: technician_profile.php?id=" . $tech_id);
+    exit;
+}
+
+// ฟังก์ชันบันทึกตอบกลับรีวิว
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply']) && isset($_POST['review_id'])) {
+    $reply = $_POST['reply'];
+    $review_id = intval($_POST['review_id']);
+
+    $stmt = $conn->prepare("UPDATE reviews SET reply=? WHERE id=? AND technician_id=?");
+    $stmt->bind_param("sii", $reply, $review_id, $tech_id);
+    $stmt->execute();
+
     header("Location: technician_profile.php?id=" . $tech_id);
     exit;
 }
@@ -40,21 +52,7 @@ if (!$tech) {
     exit;
 }
 
-// --- ฟังก์ชันบันทึกตอบกลับรีวิว ---
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reply']) && isset($_POST['review_id'])) {
-    $reply = $_POST['reply'];
-    $review_id = intval($_POST['review_id']);
-
-    // อัปเดตคอลัมน์ reply ในตาราง reviews
-    $stmt = $conn->prepare("UPDATE reviews SET reply=? WHERE id=? AND technician_id=?");
-    $stmt->bind_param("sii", $reply, $review_id, $tech_id);
-    $stmt->execute();
-
-    header("Location: technician_profile.php?id=" . $tech_id);
-    exit;
-}
-
-// ดึงรีวิวของช่างคนนี้ (สมมติตาราง reviews มีฟิลด์ id, technician_id, user_name, rating, comment, reply, created_at)
+// ดึงรีวิวของช่าง
 $stmt2 = $conn->prepare("SELECT * FROM reviews WHERE technician_id=? ORDER BY created_at DESC");
 $stmt2->bind_param("i", $tech_id);
 $stmt2->execute();
@@ -66,12 +64,13 @@ $reviews = $stmt2->get_result();
 
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>โปรไฟล์ช่าง: <?php echo htmlspecialchars($tech['name']); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
-<body class="container mt-5">
+<body class="container mt-4 mb-5">
 
     <div class="card shadow rounded-4 p-4 mb-4">
         <h2><?php echo htmlspecialchars($tech['name']); ?></h2>
@@ -86,8 +85,11 @@ $reviews = $stmt2->get_result();
         <?php while ($review = $reviews->fetch_assoc()): ?>
             <div class="card mb-3">
                 <div class="card-body">
-                    <h5><?php echo htmlspecialchars($review['user_name']); ?> <small class="text-muted">- วันที่
-                            <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small></h5>
+                    <h5>
+                        <?php echo htmlspecialchars($review['user_name']); ?>
+                        <small class="text-muted">- วันที่
+                            <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small>
+                    </h5>
                     <p>คะแนน: <?php echo intval($review['rating']); ?>/5</p>
                     <p><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
 
@@ -97,8 +99,7 @@ $reviews = $stmt2->get_result();
                             <?php echo nl2br(htmlspecialchars($review['reply'])); ?>
                         </div>
                     <?php else: ?>
-                        <!-- ฟอร์มให้ช่างตอบกลับ -->
-                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'technician' && $_SESSION['user_id'] == $tech_id): ?>
+                        <?php if ($can_edit): ?>
                             <form method="POST" class="mt-3">
                                 <input type="hidden" name="review_id" value="<?php echo $review['id']; ?>">
                                 <textarea name="reply" class="form-control mb-2" placeholder="ตอบกลับรีวิวนี้..." required></textarea>

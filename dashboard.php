@@ -101,7 +101,8 @@ function loadTechnicians(myLatLng){
             let content = `<strong>${t.name}</strong><br>
                            ประเภท: ${t.specialty}<br>
                            เบอร์: ${t.phone}<br>
-                           <a href="reviews.php?tid=${t.id}" class="btn btn-sm btn-primary mt-1">รีวิว</a>`;
+                           <a href="reviews.php?tid=${t.id}" class="btn btn-sm btn-primary mt-1">รีวิว</a>
+                           <a href="create_or_get_conversation.php?technician_id=${t.id}" class="btn btn-sm btn-success mt-1 ms-1">แชทกับช่าง</a>`;
 
             let infoWindow = new google.maps.InfoWindow({ content: content });
             marker.addListener('click', function(){ infoWindow.open(map,marker); });

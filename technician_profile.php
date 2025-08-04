@@ -9,10 +9,12 @@ if (!isset($_GET['id'])) {
 
 $tech_id = intval($_GET['id']);
 
-// อนุญาตให้ช่างที่ล็อกอินแก้ไขได้เท่านั้น
+// ตรวจสิทธิ์แก้ไขโปรไฟล์ช่าง
 $can_edit = isset($_SESSION['role'], $_SESSION['user_id']) &&
     $_SESSION['role'] === 'technician' &&
     $_SESSION['user_id'] == $tech_id;
+
+$user_id = $_SESSION['user_id'] ?? 0;  // ID ผู้ใช้ที่ล็อกอิน
 
 // อัปเดตข้อมูลช่าง (ถ้ามี POST สำหรับแก้ไข)
 if ($can_edit && $_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_profile'])) {
@@ -68,6 +70,7 @@ $reviews = $stmt2->get_result();
     <title>โปรไฟล์ช่าง: <?php echo htmlspecialchars($tech['name']); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="container mt-4 mb-5">
@@ -112,7 +115,65 @@ $reviews = $stmt2->get_result();
         <?php endwhile; ?>
     <?php endif; ?>
 
-    <a href="dashboard.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
+    <hr>
+
+    <h3>แชทกับช่าง</h3>
+    <div id="chat-box"
+        style="background:#2a1e57; border-radius:10px; padding:10px; height:300px; overflow-y:auto; color:white; max-width:800px; margin-bottom:1rem;">
+        กำลังโหลดข้อความ...
+    </div>
+
+    <form id="chat-form" style="max-width:800px;">
+        <input type="hidden" name="technician_id" value="<?php echo $tech_id; ?>">
+        <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+        <textarea name="message" placeholder="พิมพ์ข้อความ..." required
+            style="width:100%; height:60px; border-radius:10px; padding:10px;"></textarea>
+        <button type="submit" class="btn btn-primary mt-2">ส่งข้อความ</button>
+    </form>
+
+    <a href="index.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
+
+    <script>
+        const chatBox = $('#chat-box');
+        const techId = <?php echo $tech_id; ?>;
+        const userId = <?php echo $user_id; ?>;
+
+        function loadChat() {
+            $.ajax({
+                url: 'chat_load.php',
+                type: 'GET',
+                data: { technician_id: techId, user_id: userId },
+                success: function (data) {
+                    chatBox.html(data);
+                    chatBox.scrollTop(chatBox[0].scrollHeight);
+                }
+            });
+        }
+
+        setInterval(loadChat, 3000);
+        loadChat();
+
+        $('#chat-form').submit(function (e) {
+            e.preventDefault();
+            const message = $(this).find('textarea[name=message]').val();
+            if (!message.trim()) return;
+
+            $.ajax({
+                url: 'chat_send.php',
+                type: 'POST',
+                data: {
+                    technician_id: techId,
+                    user_id: userId,
+                    sender: 'user',
+                    message: message
+                },
+                success: function (response) {
+                    $('#chat-form')[0].reset();
+                    loadChat();
+                }
+            });
+        });
+    </script>
 
 </body>
 

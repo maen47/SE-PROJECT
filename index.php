@@ -1,4 +1,10 @@
 <!-- index.php -->
+ <?php
+session_start();
+session_unset();       // เคลียร์ค่าทั้งหมดใน $_SESSION
+session_destroy();     // ทำลาย session ปัจจุบัน
+?>
+
 <!DOCTYPE html>
 <html lang="th">
 <head>

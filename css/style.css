@@ -1,0 +1,215 @@
+/* ฟอนต์ Sarabun (โหลดจาก Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Sarabun', sans-serif;
+  background: linear-gradient(to right, #0b0220, #1c0432);
+  color: white;
+  /* สำหรับหน้า login/register ให้กึ่งกลาง แต่ไม่บังคับทุกหน้า */
+}
+
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  /* เว้นขอบรอบๆ เพื่อมือถือ */
+  box-sizing: border-box;
+}
+
+/* ฟอร์ม Login, Register, Technician */
+form {
+  background-color: #140634;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  color: white;
+}
+
+/* เพิ่ม class สำหรับการ์ดล็อคอิน */
+.login-card {
+  border-radius: 1.5rem;
+  padding: 40px 50px;
+  max-width: 400px;
+  width: 100%;
+  background-color: #140634;
+  /* ตามธีมเดิม */
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+  margin: auto;
+  position: relative;
+}
+
+form h1,
+form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+input,
+select,
+textarea {
+  margin-bottom: 20px;
+  padding: 14px 15px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-family: 'Sarabun', sans-serif;
+  background-color: #2a1e57;
+  color: white;
+  box-sizing: border-box;
+  transition: background-color 0.3s;
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  background-color: #3e2a81;
+}
+
+/* เว้นพื้นที่ซ้าย input สำหรับไอคอน */
+.form-control {
+  padding-left: 3rem;
+  position: relative;
+}
+
+/* ไอคอนในฟอร์ม */
+.form-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+  font-size: 18px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background: linear-gradient(to right, #5f00ba, #c700c7);
+  color: white;
+  padding: 14px 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: linear-gradient(to right, #400088, #990099);
+}
+
+a {
+  color: #c9a5ff;
+  text-align: center;
+  display: block;
+  margin-top: 18px;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* เพิ่มตรงนี้เพื่อเปลี่ยนสีฟอนต์ navbar-text */
+nav.navbar .navbar-text {
+  color: #c9a5ff !important;
+}
+
+
+/* หน้า dashboard (แผนที่) */
+.map-page #map {
+  width: 90%;
+  height: 80vh;
+  margin: 20px auto;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  background-color: #140634;
+  /* กรณีโหลดช้า */
+}
+
+/* คอนเทนเนอร์ dropdown ระยะ */
+.map-page #distance {
+  max-width: 120px;
+  margin-bottom: 15px;
+}
+
+/* รายการช่าง (ถ้ามี) */
+#technicians {
+  margin-top: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #1d0641;
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+}
+
+#technicians div {
+  background: white;
+  color: #333;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* รีวิว */
+.review-list .review-item {
+  background: #140634;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.review-list .review-item strong {
+  font-size: 1.1em;
+}
+
+.review-list .review-item .rating {
+  display: inline-block;
+  background: #c700c7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+  margin-left: 8px;
+  font-size: 0.9em;
+}
+
+.review-list .review-item p {
+  margin-top: 5px;
+  white-space: pre-line;
+}
+
+/* ปรับ navbar bootstrap (ถ้ามี) */
+.navbar {
+  background-color: #1c0432 !important;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #c9a5ff !important;
+}
+
+.navbar-brand:hover,
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+}

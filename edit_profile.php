@@ -2,36 +2,30 @@
 session_start();
 include('db/db.php');
 
-if (!isset($_SESSION['user_id'])) {
+// ตรวจสอบว่าเป็นช่างที่ล็อกอินอยู่
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'technician') {
     header("Location: index.php");
     exit;
 }
 
-// สมมติว่ามี $_SESSION['role'] = 'user' หรือ 'technician'
-$user_id = $_SESSION['user_id'];
-$role = $_SESSION['role']; // 'user' หรือ 'technician'
+$tech_id = $_SESSION['user_id'];
 
-// ดึงข้อมูลโปรไฟล์ปัจจุบัน
-if ($role === 'user') {
-    $table = 'users';
-} elseif ($role === 'technician') {
-    $table = 'technicians';
-} else {
-    echo "สิทธิ์ไม่ถูกต้อง";
+// ดึงข้อมูลช่าง
+$stmt = $conn->prepare("SELECT * FROM technicians WHERE id=?");
+$stmt->bind_param("i", $tech_id);
+$stmt->execute();
+$tech = $stmt->get_result()->fetch_assoc();
+
+if (!$tech) {
+    echo "ไม่พบข้อมูลช่าง";
     exit;
 }
-
-$stmt = $conn->prepare("SELECT * FROM $table WHERE id=?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$user = $stmt->get_result()->fetch_assoc();
 
 $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // อัปโหลดรูปโปรไฟล์
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($_FILES['profile_image']['type'], $allowed_types)) {
             $ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
@@ -43,11 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $upload_path = $upload_dir . $new_filename;
             if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $upload_path)) {
                 // อัปเดตชื่อไฟล์ในฐานข้อมูล
-                $stmt = $conn->prepare("UPDATE $table SET profile_image=? WHERE id=?");
-                $stmt->bind_param("si", $new_filename, $user_id);
+                $stmt = $conn->prepare("UPDATE technicians SET profile_image=? WHERE id=?");
+                $stmt->bind_param("si", $new_filename, $tech_id);
                 if ($stmt->execute()) {
                     $success = "อัปโหลดรูปโปรไฟล์สำเร็จ";
-                    $user['profile_image'] = $new_filename; // อัพเดตในตัวแปรเพื่อแสดงภาพใหม่
+                    $tech['profile_image'] = $new_filename; // อัปเดตตัวแปรเพื่อแสดงภาพใหม่ทันที
                 } else {
                     $error = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
                 }
@@ -68,13 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <head>
     <meta charset="UTF-8" />
-    <title>แก้ไขโปรไฟล์</title>
+    <title>แก้ไขรูปโปรไฟล์ช่าง</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
 </head>
 
 <body class="container mt-4">
-    <h2>แก้ไขรูปโปรไฟล์</h2>
+    <h2>แก้ไขรูปโปรไฟล์ช่าง</h2>
 
     <?php if ($error): ?>
         <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
@@ -85,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <div class="mb-3">
-        <img src="uploads/profile_images/<?php echo htmlspecialchars($user['profile_image'] ?? 'default_profile.png'); ?>" 
-             alt="รูปโปรไฟล์" class="rounded-circle" width="150" height="150">
+        <img src="uploads/profile_images/<?php echo htmlspecialchars($tech['profile_image'] ?? 'default_profile.png'); ?>"
+             alt="รูปโปรไฟล์ช่าง" class="rounded-circle" width="150" height="150">
     </div>
 
     <form method="POST" enctype="multipart/form-data">
@@ -97,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-primary">อัปโหลด</button>
     </form>
 
-    <a href="<?php echo $role === 'technician' ? 'technician_profile.php?id=' . $user_id : 'index.php'; ?>" class="btn btn-secondary mt-3">กลับ</a>
+    <a href="technician_profile.php?id=<?php echo $tech_id; ?>" class="btn btn-secondary mt-3">กลับไปที่โปรไฟล์</a>
 </body>
 
 </html>

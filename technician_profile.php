@@ -59,6 +59,7 @@ $stmt2 = $conn->prepare("SELECT * FROM reviews WHERE technician_id=? ORDER BY cr
 $stmt2->bind_param("i", $tech_id);
 $stmt2->execute();
 $reviews = $stmt2->get_result();
+
 ?>
 
 <!DOCTYPE html>
@@ -74,106 +75,124 @@ $reviews = $stmt2->get_result();
 </head>
 
 <body class="container mt-4 mb-5">
+    <<div class="card shadow rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark"
+        style="background-color: #fff;">
+        <?php
+        $profileImage = __DIR__ . '/uploads/profile_images/' . ($tech['profile_image'] ?? '');
+        if (!empty($tech['profile_image']) && file_exists($profileImage)):
+            ?>
+            <img src="uploads/profile_images/<?php echo htmlspecialchars($tech['profile_image']); ?>" alt="รูปโปรไฟล์"
+                style="width:120px; height:120px; object-fit:cover; border-radius:15px;">
+        <?php else: ?>
+            <img src="default-profile.png" alt="รูปโปรไฟล์"
+                style="width:120px; height:120px; object-fit:cover; border-radius:15px;">
+        <?php endif; ?>
 
-    <div class="card shadow rounded-4 p-4 mb-4">
-        <h2><?php echo htmlspecialchars($tech['name']); ?></h2>
-        <p><strong>ประเภทงานช่าง:</strong> <?php echo htmlspecialchars($tech['specialty']); ?></p>
-        <p><strong>เบอร์โทร:</strong> <?php echo htmlspecialchars($tech['phone']); ?></p>
-    </div>
+        <div>
+            <h2 class="text-dark"><?php echo htmlspecialchars($tech['name']); ?></h2>
+            <p><strong>ประเภทงานช่าง:</strong> <?php echo htmlspecialchars($tech['specialty']); ?></p>
+            <p><strong>เบอร์โทร:</strong> <?php echo htmlspecialchars($tech['phone']); ?></p>
+            <a href="edit_profile.php" class="btn btn-primary rounded-3" style="min-width: 120px;">แก้ไขโปรไฟล์</a>
+        </div>
+        </div>
 
-    <h3>รีวิวจากลูกค้า</h3>
-    <?php if ($reviews->num_rows == 0): ?>
-        <p>ยังไม่มีรีวิวสำหรับช่างคนนี้</p>
-    <?php else: ?>
-        <?php while ($review = $reviews->fetch_assoc()): ?>
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5>
-                        <?php echo htmlspecialchars($review['user_name']); ?>
-                        <small class="text-muted">- วันที่
-                            <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small>
-                    </h5>
-                    <p>คะแนน: <?php echo intval($review['rating']); ?>/5</p>
-                    <p><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
 
-                    <?php if ($review['reply']): ?>
-                        <div class="alert alert-info">
-                            <strong>ตอบกลับช่าง:</strong><br>
-                            <?php echo nl2br(htmlspecialchars($review['reply'])); ?>
-                        </div>
-                    <?php else: ?>
-                        <?php if ($can_edit): ?>
-                            <form method="POST" class="mt-3">
-                                <input type="hidden" name="review_id" value="<?php echo $review['id']; ?>">
-                                <textarea name="reply" class="form-control mb-2" placeholder="ตอบกลับรีวิวนี้..." required></textarea>
-                                <button type="submit" class="btn btn-sm btn-primary">ส่งคำตอบ</button>
-                            </form>
+
+
+        <h3>รีวิวจากลูกค้า</h3>
+        <?php if ($reviews->num_rows == 0): ?>
+            <p>ยังไม่มีรีวิวสำหรับช่างคนนี้</p>
+        <?php else: ?>
+            <?php while ($review = $reviews->fetch_assoc()): ?>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5>
+                            <?php echo htmlspecialchars($review['user_name']); ?>
+                            <small class="text-muted">- วันที่
+                                <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small>
+                        </h5>
+                        <p>คะแนน: <?php echo intval($review['rating']); ?>/5</p>
+                        <p><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
+
+                        <?php if ($review['reply']): ?>
+                            <div class="alert alert-info">
+                                <strong>ตอบกลับช่าง:</strong><br>
+                                <?php echo nl2br(htmlspecialchars($review['reply'])); ?>
+                            </div>
+                        <?php else: ?>
+                            <?php if ($can_edit): ?>
+                                <form method="POST" class="mt-3">
+                                    <input type="hidden" name="review_id" value="<?php echo $review['id']; ?>">
+                                    <textarea name="reply" class="form-control mb-2" placeholder="ตอบกลับรีวิวนี้..."
+                                        required></textarea>
+                                    <button type="submit" class="btn btn-sm btn-primary">ส่งคำตอบ</button>
+                                </form>
+                            <?php endif; ?>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
                 </div>
-            </div>
-        <?php endwhile; ?>
-    <?php endif; ?>
+            <?php endwhile; ?>
+        <?php endif; ?>
 
-    <hr>
+        <hr>
 
-    <h3>แชทกับช่าง</h3>
-    <div id="chat-box"
-        style="background:#2a1e57; border-radius:10px; padding:10px; height:300px; overflow-y:auto; color:white; max-width:800px; margin-bottom:1rem;">
-        กำลังโหลดข้อความ...
-    </div>
+        <h3>แชทกับช่าง</h3>
+        <div id="chat-box"
+            style="background:#2a1e57; border-radius:10px; padding:10px; height:300px; overflow-y:auto; color:white; max-width:800px; margin-bottom:1rem;">
+            กำลังโหลดข้อความ...
+        </div>
 
-    <form id="chat-form" style="max-width:800px;">
-        <input type="hidden" name="technician_id" value="<?php echo $tech_id; ?>">
-        <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-        <textarea name="message" placeholder="พิมพ์ข้อความ..." required
-            style="width:100%; height:60px; border-radius:10px; padding:10px;"></textarea>
-        <button type="submit" class="btn btn-primary mt-2">ส่งข้อความ</button>
-    </form>
+        <form id="chat-form" style="max-width:800px;">
+            <input type="hidden" name="technician_id" value="<?php echo $tech_id; ?>">
+            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
+            <textarea name="message" placeholder="พิมพ์ข้อความ..." required
+                style="width:100%; height:60px; border-radius:10px; padding:10px;"></textarea>
+            <button type="submit" class="btn btn-primary mt-2">ส่งข้อความ</button>
+        </form>
 
-    <a href="index.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
+        <a href="index.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
 
-    <script>
-        const chatBox = $('#chat-box');
-        const techId = <?php echo $tech_id; ?>;
-        const userId = <?php echo $user_id; ?>;
+        <script>
+            const chatBox = $('#chat-box');
+            const techId = <?php echo $tech_id; ?>;
+            const userId = <?php echo $user_id; ?>;
 
-        function loadChat() {
-            $.ajax({
-                url: 'chat_load.php',
-                type: 'GET',
-                data: { technician_id: techId, user_id: userId },
-                success: function (data) {
-                    chatBox.html(data);
-                    chatBox.scrollTop(chatBox[0].scrollHeight);
-                }
+            function loadChat() {
+                $.ajax({
+                    url: 'chat_load.php',
+                    type: 'GET',
+                    data: { technician_id: techId, user_id: userId },
+                    success: function (data) {
+                        chatBox.html(data);
+                        chatBox.scrollTop(chatBox[0].scrollHeight);
+                    }
+                });
+            }
+
+            setInterval(loadChat, 3000);
+            loadChat();
+
+            $('#chat-form').submit(function (e) {
+                e.preventDefault();
+                const message = $(this).find('textarea[name=message]').val();
+                if (!message.trim()) return;
+
+                $.ajax({
+                    url: 'chat_send.php',
+                    type: 'POST',
+                    data: {
+                        technician_id: techId,
+                        user_id: userId,
+                        sender: 'user',
+                        message: message
+                    },
+                    success: function (response) {
+                        $('#chat-form')[0].reset();
+                        loadChat();
+                    }
+                });
             });
-        }
-
-        setInterval(loadChat, 3000);
-        loadChat();
-
-        $('#chat-form').submit(function (e) {
-            e.preventDefault();
-            const message = $(this).find('textarea[name=message]').val();
-            if (!message.trim()) return;
-
-            $.ajax({
-                url: 'chat_send.php',
-                type: 'POST',
-                data: {
-                    technician_id: techId,
-                    user_id: userId,
-                    sender: 'user',
-                    message: message
-                },
-                success: function (response) {
-                    $('#chat-form')[0].reset();
-                    loadChat();
-                }
-            });
-        });
-    </script>
+        </script>
 
 </body>
 

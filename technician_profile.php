@@ -75,7 +75,7 @@ $reviews = $stmt2->get_result();
 </head>
 
 <body class="container mt-4 mb-5">
-    <<div class="card shadow rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark"
+    <div class="card shadow rounded-4 p-4 mb-4 d-flex align-items-center gap-3 text-dark"
         style="background-color: #fff;">
         <?php
         $profileImage = __DIR__ . '/uploads/profile_images/' . ($tech['profile_image'] ?? '');

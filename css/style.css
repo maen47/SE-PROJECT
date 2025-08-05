@@ -6,9 +6,87 @@ body {
   font-family: 'Sarabun', sans-serif;
   background: linear-gradient(to right, #0b0220, #1c0432);
   color: white;
+  min-height: 100vh;
+}
+#map {
+  height: 70vh; /* หรือสูงพอ */
+  width: 100%;
+  min-height: 300px;
 }
 
-/* Card styling */
+/* ฟอร์ม login ให้อยู่ตรงกลางแนวดิ่งแนวนอน */
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-card {
+  background-color: #140634;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+  color: white;
+}
+
+.login-card h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #c9a5ff;
+}
+
+.login-card .form-control {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #2a1e57;
+  color: white;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.form-icon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: white;
+  pointer-events: none;
+}
+
+.login-card button {
+  width: 100%;
+  background: linear-gradient(to right, #5f00ba, #c700c7);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  transition: background 0.3s;
+}
+
+.login-card button:hover {
+  background: linear-gradient(to right, #400088, #990099);
+}
+
+.login-card a {
+  display: block;
+  margin-top: 10px;
+  text-align: center;
+  color: #c9a5ff;
+  text-decoration: none;
+}
+
+.login-card a:hover {
+  text-decoration: underline;
+}
+
+
+/* ส่วนอื่น ๆ ที่มีอยู่เดิม */
 .card {
   max-width: 800px;
   margin-left: auto;
@@ -18,19 +96,16 @@ body {
   border-radius: 1rem;
 }
 
-/* Heading styles */
 h2, h3, h5 {
   font-weight: 600;
   color: #c9a5ff;
 }
 
-/* Alert for reply */
 .alert-info {
   background-color: #3b2169;
   color: white;
 }
 
-/* Form textarea (ตอบกลับ) */
 form textarea.form-control {
   width: 100%;
   min-height: 100px;
@@ -43,8 +118,38 @@ form textarea.form-control {
   font-family: 'Sarabun', sans-serif;
 }
 
-/* Responsive adjustments */
-@media (max-width: 991.98px) { /* tablets */
+.profile-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ปุ่ม */
+.btn-primary {
+  background: linear-gradient(to right, #5f00ba, #c700c7);
+  border: none;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #400088, #990099);
+}
+
+.btn-secondary {
+  background-color: #444066;
+  border: none;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5f00ba;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
   .card {
     padding: 1.5rem;
     margin: 1rem;
@@ -57,13 +162,16 @@ form textarea.form-control {
   }
 }
 
-@media (max-width: 575.98px) { /* mobile */
+@media (max-width: 575.98px) {
   body {
     padding: 10px;
   }
   .card {
     padding: 1rem;
     margin: 0.5rem;
+  }
+  .login-card {
+    padding: 1.5rem 1rem;
   }
   h2 {
     font-size: 1.5rem;
@@ -81,27 +189,4 @@ form textarea.form-control {
   form textarea.form-control {
     min-height: 120px;
   }
-}
-
-/* ปุ่มส่งตอบกลับ */
-.btn-primary {
-  background: linear-gradient(to right, #5f00ba, #c700c7);
-  border: none;
-  transition: background 0.3s;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(to right, #400088, #990099);
-}
-
-/* ปุ่มกลับหน้าหลัก */
-.btn-secondary {
-  background-color: #444066;
-  border: none;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #5f00ba;
-  color: white;
 }

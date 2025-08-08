@@ -64,9 +64,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="alert alert-success"><?php echo $success; ?></div>
       <?php endif; ?>
 
-      <input type="text" name="name" placeholder="ชื่อ-นามสกุล" required />
-      <input type="email" name="email" placeholder="อีเมล" required />
-      <input type="password" name="password" placeholder="รหัสผ่าน" required />
+      <div style="position: relative;">
+        <span class="form-icon">👤</span>
+        <input type="text" name="name" placeholder="ชื่อ-นามสกุล" class="form-control" required>
+      </div>
+
+      <div style="position: relative;">
+        <span class="form-icon">📧</span>
+        <input type="email" name="email" placeholder="อีเมล" class="form-control" required>
+      </div>
+
+      <div style="position: relative;">
+        <span class="form-icon">🔒</span>
+        <input type="password" name="password" placeholder="รหัสผ่าน" class="form-control" required>
+      </div>
 
       <button type="submit">สมัครสมาชิก</button>
 
@@ -74,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <a href="index.php">← กลับไปหน้าหลัก</a>
     </form>
   </div>
+
 
 </body>
 

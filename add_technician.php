@@ -102,18 +102,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="alert alert-success"><?php echo $success; ?></div>
       <?php endif; ?>
 
-      <input type="text" name="name" placeholder="ชื่อ-นามสกุล" required>
-      <input type="email" name="email" placeholder="อีเมล" required>
-      <input type="password" name="password" placeholder="รหัสผ่าน" required>
-      <input type="text" name="phone" placeholder="เบอร์โทร" required>
+      <div style="position: relative;">
+        <span class="form-icon">👤</span>
+        <input type="text" name="name" placeholder="ชื่อ-นามสกุล" class="form-control" required>
+      </div>
 
-      <select name="specialty" required>
-        <option value="ช่างไฟฟ้า">ช่างไฟฟ้า</option>
-        <option value="ช่างแอร์">ช่างแอร์</option>
-        <option value="ช่างประปา">ช่างประปา</option>
-        <option value="ช่างซ่อมคอม">ช่างซ่อมคอม</option>
-        <option value="อื่นๆ">อื่นๆ</option>
-      </select>
+      <div style="position: relative;">
+        <span class="form-icon">📧</span>
+        <input type="email" name="email" placeholder="อีเมล" class="form-control" required>
+      </div>
+
+      <div style="position: relative;">
+        <span class="form-icon">🔒</span>
+        <input type="password" name="password" placeholder="รหัสผ่าน" class="form-control" required>
+      </div>
+
+      <div style="position: relative;">
+        <span class="form-icon">📞</span>
+        <input type="text" name="phone" placeholder="เบอร์โทร" class="form-control" required>
+      </div>
+
+      <div style="position: relative;">
+        <span class="form-icon">🛠</span>
+        <select name="specialty" class="form-control" required>
+          <option value="ช่างไฟฟ้า">ช่างไฟฟ้า</option>
+          <option value="ช่างแอร์">ช่างแอร์</option>
+          <option value="ช่างประปา">ช่างประปา</option>
+          <option value="ช่างซ่อมคอม">ช่างซ่อมคอม</option>
+          <option value="อื่นๆ">อื่นๆ</option>
+        </select>
+      </div>
 
       <input type="hidden" name="lat" id="lat" required>
       <input type="hidden" name="lng" id="lng" required>
@@ -123,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       <a href="index.php">← กลับหน้าเข้าสู่ระบบ</a>
     </form>
   </div>
+
 </body>
 
 </html>

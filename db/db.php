@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
-$user = 'Aphirak';
-$pass = 'Maen1234';
+$user = 'Maen';
+$pass = 'Maen123456';
 $dbname = 'thunderfix';
 
 // Create connection

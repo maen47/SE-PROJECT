@@ -8,8 +8,9 @@ body {
   color: white;
   min-height: 100vh;
 }
+
 #map {
-  height: 70vh; /* หรือสูงพอ */
+  height: 70vh;
   width: 100%;
   min-height: 300px;
 }
@@ -24,7 +25,7 @@ body {
 }
 
 .login-card {
-  background-color: #140634;
+  background-color: #fcfcfc;
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
@@ -39,29 +40,42 @@ body {
   color: #c9a5ff;
 }
 
-.login-card .form-control {
-  width: 100%;
-  padding: 10px 12px 10px 36px;
-  margin-bottom: 1rem;
-  border: none;
-  border-radius: 10px;
-  background-color: #2a1e57;
-  color: white;
-  font-family: 'Sarabun', sans-serif;
+/* ช่อง input */
+/* ===== ปรับสีฟอนต์และ Placeholder ในฟอร์ม Login ให้เป็นสีขาว ===== */
+.login-card input[type="text"],
+.login-card input[type="email"],
+.login-card input[type="password"],
+.login-card input[type="tel"],
+.login-card select {
+    color: #ffffff; /* สีตัวอักษรในช่องกรอก */
+    padding-left: 35px; /* เว้นที่ด้านซ้ายให้ไอคอนไม่บังข้อความ */
+    background-color: transparent; /* ถ้าต้องการพื้นหลังโปร่ง */
+    border: 1px solid white; /* เพิ่มกรอบสีขาว ถ้าต้องการ */
+    border-radius: 5px;
+    height: 38px;
+    box-sizing: border-box;
 }
 
+.login-card input::placeholder,
+.login-card select option {
+    color: #ffffff; /* สี placeholder และ option */
+    opacity: 0.8;   /* ให้จางลงเล็กน้อย */
+}
+
+/* ปรับสีไอคอนในฟอร์ม เป็นสีขาว */
 .form-icon {
   position: absolute;
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: white;
+  color: #ffffff; /* สีขาว */
   pointer-events: none;
 }
 
+/* ปุ่ม */
 .login-card button {
   width: 100%;
-  background: linear-gradient(to right, #5f00ba, #c700c7);
+  background: linear-gradient(to right, #7c3aed, #a855f7);
   color: white;
   border: none;
   border-radius: 10px;
@@ -70,7 +84,7 @@ body {
 }
 
 .login-card button:hover {
-  background: linear-gradient(to right, #400088, #990099);
+  background: linear-gradient(to right, #5b21b6, #9333ea);
 }
 
 .login-card a {
@@ -85,8 +99,7 @@ body {
   text-decoration: underline;
 }
 
-
-/* ส่วนอื่น ๆ ที่มีอยู่เดิม */
+/* ส่วนอื่น ๆ */
 .card {
   max-width: 800px;
   margin-left: auto;
@@ -126,7 +139,7 @@ form textarea.form-control {
   margin: 0 auto;
 }
 
-/* ปุ่ม */
+/* ปุ่มเสริม */
 .btn-primary {
   background: linear-gradient(to right, #5f00ba, #c700c7);
   border: none;

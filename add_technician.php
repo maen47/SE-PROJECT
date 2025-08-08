@@ -91,6 +91,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-white" href="#">ThunderFix</a>
+      <span class="navbar-text text-white">ค้นหาช่างทันใจ</span>
+    </div>
+  </nav>
   <div class="centered-container">
     <form method="POST" onsubmit="return validateLocation();" class="login-card">
       <h1>สมัครเป็นช่าง</h1>

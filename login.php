@@ -50,10 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $error = "อีเมลหรือรหัสผ่านไม่ถูกต้อง!";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
     <meta charset="UTF-8">
     <title>เข้าสู่ระบบ | ThunderFix</title>
@@ -62,7 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg">
         <div class="container">
@@ -73,31 +70,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- กลางหน้าจอ -->
     <div class="centered-container">
-        <form method="POST" class="login-card">
+        <form method="POST" class="login-card" novalidate>
             <h1>เข้าสู่ระบบ</h1>
 
             <?php if ($error): ?>
-                <div class="alert alert-danger"><?php echo $error; ?></div>
+                <div class="alert alert-danger" role="alert"><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></div>
             <?php endif; ?>
 
-            <div style="position: relative;">
+            <!-- อีเมล -->
+            <div style="position: relative; margin-bottom: 12px;">
                 <span class="form-icon">📧</span>
                 <input type="email" name="email" placeholder="อีเมล" class="form-control" required>
             </div>
 
-            <div style="position: relative;">
+            <!-- รหัสผ่าน + ปุ่มดู/ซ่อน -->
+            <div style="position: relative; margin-bottom: 12px;">
                 <span class="form-icon">🔒</span>
-                <input type="password" name="password" placeholder="รหัสผ่าน" class="form-control" required>
+                <input type="password" id="password" name="password" placeholder="รหัสผ่าน" class="form-control" required>
+                <button type="button" id="togglePassword" class="toggle-password-btn" aria-label="แสดง/ซ่อนรหัสผ่าน" title="แสดง/ซ่อนรหัสผ่าน">
+                    <span id="eyeIcon" aria-hidden="true">👁</span>
+                </button>
             </div>
 
-            <button type="submit">เข้าสู่ระบบ</button>
+            <button type="submit" class="btn btn-primary w-100">เข้าสู่ระบบ</button>
 
-            <a href="register.php">สมัครสมาชิกผู้ใช้งาน</a>
-            <a href="index.php">กลับไปหน้าหลัก</a>
+            <div class="d-flex gap-3 justify-content-center">
+                <a href="register.php">สมัครสมาชิกผู้ใช้งาน</a>
+                <a href="index.php">กลับไปหน้าหลัก</a>
+                <a href="forgot_password.php">ลืม</a>
+            </div>
         </form>
     </div>
 
+    <!-- สคริปต์ปุ่มดู/ซ่อนรหัสผ่าน -->
+    <script>
+        (function(){
+            const toggleBtn = document.getElementById('togglePassword');
+            const pwdInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eyeIcon');
 
+            // คลิกสลับแสดง/ซ่อน
+            toggleBtn.addEventListener('click', function () {
+                const isHidden = pwdInput.type === 'password';
+                pwdInput.type = isHidden ? 'text' : 'password';
+                eyeIcon.textContent = isHidden ? '🙈' : '👁';
+                pwdInput.focus({ preventScroll: true });
+            });
+
+            // รองรับกดคีย์บอร์ด (เช่น Space/Enter)
+            toggleBtn.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleBtn.click();
+                }
+            });
+        })();
+    </script>
 </body>
-
 </html>

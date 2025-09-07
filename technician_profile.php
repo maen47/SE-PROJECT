@@ -80,7 +80,7 @@ $reviews = $stmt2->get_result();
         <?php
         $profileImage = __DIR__ . '/uploads/profile_images/' . ($tech['profile_image'] ?? '');
         if (!empty($tech['profile_image']) && file_exists($profileImage)):
-            ?>
+        ?>
             <img src="uploads/profile_images/<?php echo htmlspecialchars($tech['profile_image']); ?>" alt="รูปโปรไฟล์"
                 style="width:120px; height:120px; object-fit:cover; border-radius:15px;">
         <?php else: ?>
@@ -89,110 +89,114 @@ $reviews = $stmt2->get_result();
         <?php endif; ?>
 
         <div>
-            <h2 class="text-dark"><?php echo htmlspecialchars($tech['name']); ?></h2>
-            <p><strong>ประเภทงานช่าง:</strong> <?php echo htmlspecialchars($tech['specialty']); ?></p>
-            <p><strong>เบอร์โทร:</strong> <?php echo htmlspecialchars($tech['phone']); ?></p>
-            <a href="edit_profile.php" class="btn btn-primary rounded-3" style="min-width: 120px;">แก้ไขโปรไฟล์</a>
+            <h2 class="text-dark"><?= htmlspecialchars($tech['name']); ?></h2>
+
+            <p class="mb-1">
+                <strong>ประเภทงานช่าง:</strong>
+                <?= htmlspecialchars($tech['tech_type'] ?: 'ไม่ระบุ'); ?>
+            </p>
+
+            <p class="mb-3">
+                <strong>เบอร์โทร:</strong>
+                <?= htmlspecialchars($tech['phone']); ?>
+            </p>
+
+            <a href="edit_profile.php" class="btn btn-primary rounded-3" style="min-width:120px;">
+                เปลี่ยนรูปโปรไฟล์
+            </a>
         </div>
+
+    </div>
+    <?php
+    // ดึงข้อมูลช่างจาก DB
+    $stmt = $conn->prepare("SELECT name, profile_image, cover_image, bio, years_experience,
+                        min_price, emergency_fee, phone, line_id, phone_public, line_id_public,
+                        languages, latitude, longitude, service_radius_km, business_hours_json
+                        FROM technicians WHERE id = ?");
+    $stmt->bind_param("i", $_GET['id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $tech = $result->fetch_assoc();
+    ?>
+
+    <div class="card mb-3">
+        <div class="card-header">
+
         </div>
+        <div class="card-body">
+            <!-- Bio -->
+            <?php if (!empty($tech['bio'])): ?>
+                <p><strong>เกี่ยวกับช่าง:</strong> <?= nl2br(htmlspecialchars($tech['bio'])); ?></p>
+            <?php endif; ?>
+
+            <!-- ประสบการณ์ -->
+            <p><strong>ประสบการณ์:</strong> <?= (int)$tech['years_experience']; ?> ปี</p>
+
+            <!-- ราคา -->
+            <p><strong>ราคาเริ่มต้น:</strong> <?= number_format($tech['min_price']); ?> ฿</p>
+            <p><strong>ค่าบริการด่วน:</strong> <?= number_format($tech['emergency_fee']); ?> ฿</p>
+
+            <!-- ภาษา -->
+            <?php if (!empty($tech['languages'])): ?>
+                <p><strong>ภาษา:</strong> <?= htmlspecialchars($tech['languages']); ?></p>
+            <?php endif; ?>
+
+            <!-- เบอร์โทร / Line -->
+            <?php if ($tech['phone_public'] && !empty($tech['phone'])): ?>
+                <p><strong>เบอร์โทร:</strong> <?= htmlspecialchars($tech['phone']); ?></p>
+            <?php endif; ?>
+
+            <?php if ($tech['line_id_public'] && !empty($tech['line_id'])): ?>
+                <p><strong>Line ID:</strong> <?= htmlspecialchars($tech['line_id']); ?></p>
+            <?php endif; ?>
+
+            <!-- พื้นที่บริการ -->
+            <?php if (!empty($tech['service_radius_km'])): ?>
+                <p><strong>พื้นที่ให้บริการ:</strong> รัศมี <?= $tech['service_radius_km']; ?> กม.</p>
+            <?php endif; ?>
+
+        </div>
+    </div>
 
 
+    <h3>รีวิวจากลูกค้า</h3>
+    <?php if ($reviews->num_rows == 0): ?>
+        <p>ยังไม่มีรีวิวสำหรับช่างคนนี้</p>
+    <?php else: ?>
+        <?php while ($review = $reviews->fetch_assoc()): ?>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>
+                        <?php echo htmlspecialchars($review['user_name']); ?>
+                        <small class="text-muted">- วันที่
+                            <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small>
+                    </h5>
+                    <p>คะแนน: <?php echo intval($review['rating']); ?>/5</p>
+                    <p><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
 
-
-        <h3>รีวิวจากลูกค้า</h3>
-        <?php if ($reviews->num_rows == 0): ?>
-            <p>ยังไม่มีรีวิวสำหรับช่างคนนี้</p>
-        <?php else: ?>
-            <?php while ($review = $reviews->fetch_assoc()): ?>
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5>
-                            <?php echo htmlspecialchars($review['user_name']); ?>
-                            <small class="text-muted">- วันที่
-                                <?php echo date('d/m/Y', strtotime($review['created_at'])); ?></small>
-                        </h5>
-                        <p>คะแนน: <?php echo intval($review['rating']); ?>/5</p>
-                        <p><?php echo nl2br(htmlspecialchars($review['comment'])); ?></p>
-
-                        <?php if ($review['reply']): ?>
-                            <div class="alert alert-info">
-                                <strong>ตอบกลับช่าง:</strong><br>
-                                <?php echo nl2br(htmlspecialchars($review['reply'])); ?>
-                            </div>
-                        <?php else: ?>
-                            <?php if ($can_edit): ?>
-                                <form method="POST" class="mt-3">
-                                    <input type="hidden" name="review_id" value="<?php echo $review['id']; ?>">
-                                    <textarea name="reply" class="form-control mb-2" placeholder="ตอบกลับรีวิวนี้..."
-                                        required></textarea>
-                                    <button type="submit" class="btn btn-sm btn-primary">ส่งคำตอบ</button>
-                                </form>
-                            <?php endif; ?>
+                    <?php if ($review['reply']): ?>
+                        <div class="alert alert-info">
+                            <strong>ตอบกลับช่าง:</strong><br>
+                            <?php echo nl2br(htmlspecialchars($review['reply'])); ?>
+                        </div>
+                    <?php else: ?>
+                        <?php if ($can_edit): ?>
+                            <form method="POST" class="mt-3">
+                                <input type="hidden" name="review_id" value="<?php echo $review['id']; ?>">
+                                <textarea name="reply" class="form-control mb-2" placeholder="ตอบกลับรีวิวนี้..."
+                                    required></textarea>
+                                <button type="submit" class="btn btn-sm btn-primary">ส่งคำตอบ</button>
+                            </form>
                         <?php endif; ?>
-                    </div>
+                    <?php endif; ?>
                 </div>
-            <?php endwhile; ?>
-        <?php endif; ?>
+            </div>
+        <?php endwhile; ?>
+    <?php endif; ?>
 
-        <hr>
+    <a href="index.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
+    <a href="chat.php" class="btn btn-secondary mt-4">แชท</a>
 
-        <h3>แชทกับช่าง</h3>
-        <div id="chat-box"
-            style="background:#2a1e57; border-radius:10px; padding:10px; height:300px; overflow-y:auto; color:white; max-width:800px; margin-bottom:1rem;">
-            กำลังโหลดข้อความ...
-        </div>
-
-        <form id="chat-form" style="max-width:800px;">
-            <input type="hidden" name="technician_id" value="<?php echo $tech_id; ?>">
-            <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
-            <textarea name="message" placeholder="พิมพ์ข้อความ..." required
-                style="width:100%; height:60px; border-radius:10px; padding:10px;"></textarea>
-            <button type="submit" class="btn btn-primary mt-2">ส่งข้อความ</button>
-        </form>
-
-        <a href="index.php" class="btn btn-secondary mt-4">กลับหน้าหลัก</a>
-
-        <script>
-            const chatBox = $('#chat-box');
-            const techId = <?php echo $tech_id; ?>;
-            const userId = <?php echo $user_id; ?>;
-
-            function loadChat() {
-                $.ajax({
-                    url: 'chat_load.php',
-                    type: 'GET',
-                    data: { technician_id: techId, user_id: userId },
-                    success: function (data) {
-                        chatBox.html(data);
-                        chatBox.scrollTop(chatBox[0].scrollHeight);
-                    }
-                });
-            }
-
-            setInterval(loadChat, 3000);
-            loadChat();
-
-            $('#chat-form').submit(function (e) {
-                e.preventDefault();
-                const message = $(this).find('textarea[name=message]').val();
-                if (!message.trim()) return;
-
-                $.ajax({
-                    url: 'chat_send.php',
-                    type: 'POST',
-                    data: {
-                        technician_id: techId,
-                        user_id: userId,
-                        sender: 'user',
-                        message: message
-                    },
-                    success: function (response) {
-                        $('#chat-form')[0].reset();
-                        loadChat();
-                    }
-                });
-            });
-        </script>
 
 </body>
 
